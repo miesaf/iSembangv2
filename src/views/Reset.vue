@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import firebase from "firebase/app"
+import { getAuth, sendPasswordResetEmail } from "firebase/auth"
 
 export default {
     name : "Reset",
@@ -26,13 +26,11 @@ export default {
 
     methods : {
         reset () {
-            var auth = firebase.auth();
-
-            auth.sendPasswordResetEmail(this.email).then(function() {
+            sendPasswordResetEmail(getAuth(), this.email).then(() => {
                 // Email sent.
                 alert("INFO: Sila semak emel anda untuk reset kata laluan.")
                 this.$router.push({ name: 'Login' })
-            }).catch(function(error) {
+            }).catch(error => {
                 // An error happened.
                 alert("RALAT: Gagal menghantar emel untuk reset kata laluan.")
             });
