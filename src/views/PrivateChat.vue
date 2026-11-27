@@ -15,13 +15,13 @@
         </div>
         <div class="mesgs">
           <div class="msg_history">
-            <div v-for="message in messages" :key="message.key">
-              <div :class="[ message.id === authUser.email ? 'outgoing_msg' : 'incoming_msg' ]">
-                <div v-if="message.id === authUser.email ? false : true" class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png"> </div>
-                <div :class="[ message.id === authUser.email ? 'sent_msg' : 'received_msg']">
-                  <div :class="[ message.id === authUser.email ? null : 'received_withd_msg' ]">
+            <div v-for="(message, key) in messages" :key="key">
+              <div :class="[ message.id === authUser?.email ? 'outgoing_msg' : 'incoming_msg' ]">
+                <div v-if="message.id === authUser?.email ? false : true" class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png"> </div>
+                <div :class="[ message.id === authUser?.email ? 'sent_msg' : 'received_msg']">
+                  <div :class="[ message.id === authUser?.email ? null : 'received_withd_msg' ]">
                     <p>{{ message.message }}</p>
-                    <span class="time_date">{{ message.createdAt | moment("h:mm a | dddd, D MMMM YYYY") }}</span>
+                    <span class="time_date">{{ $moment(message.createdAt, "h:mm a | dddd, D MMMM YYYY") }}</span>
                   </div>
                 </div>
               </div>
@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import firebase from "firebase/app"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { onValue, orderByChild, push, query, ref } from "firebase/database"
 
 export default {
   name : 'PrivateChat',
@@ -58,7 +59,7 @@ export default {
     saveMessage() {
       // var datee = new Date()
       // console.log(datee)
-      database.ref('chat/').push({
+      push(ref(database, 'chat/'), {
         id: this.authUser.email,
         message: this.message,
         createdAt: this.getNow()
@@ -66,7 +67,7 @@ export default {
     },
 
     fetchMessages() {
-      database.ref('chat/').orderByChild('createdAt').on('value',(snapshot)=>{
+      onValue(query(ref(database, 'chat/'), orderByChild('createdAt')), (snapshot)=>{
         this.messages = snapshot.val()
       })
     },
@@ -81,7 +82,7 @@ export default {
   },
 
   created () {
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(getAuth(), user => {
       if (user) {
         // User is signed in.
         // console.log(user.email)

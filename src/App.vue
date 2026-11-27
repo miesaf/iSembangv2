@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import firebase from "firebase/app"
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 
 export default {
   data() {
@@ -23,12 +23,12 @@ export default {
 
   methods: {
     logout () {
-      firebase.auth().signOut().then(entah => {
+      signOut(getAuth()).then(entah => {
         // Sign-out successful.
         this.isAuth = false
         // this.$router.push({ name: 'Login' })
         alert("INFO: Anda telah berjaya logout.")
-      }).catch(function(error) {
+      }).catch(error => {
         // An error happened.
         this.isAuth = false
         this.$router.push({ name: 'Login' })
@@ -38,7 +38,7 @@ export default {
   },
 
   created () {
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(getAuth(), user => {
       if (user) {
         this.isAuth = true
       } else {

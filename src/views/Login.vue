@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import firebase from "firebase/app"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
 export default {
     name : "Login",
@@ -32,7 +32,7 @@ export default {
 
     methods : {
         login () {
-            firebase.auth().signInWithEmailAndPassword(this.email, this.pword)
+            signInWithEmailAndPassword(getAuth(), this.email, this.pword)
                 .then((user)=>{
                     console.log("berjaya: " + user)
                     this.user = user.user

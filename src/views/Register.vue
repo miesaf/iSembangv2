@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import firebase from "firebase/app"
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
 
 export default {
     name : "Register",
@@ -31,7 +31,7 @@ export default {
 
     methods : {
         register () {
-            firebase.auth().createUserWithEmailAndPassword(this.email, this.pword)
+            createUserWithEmailAndPassword(getAuth(), this.email, this.pword)
                 .then((user)=>{
                     console.log("berjaya: " + user)
                     this.$router.push({ name: 'PrivateChat' })
